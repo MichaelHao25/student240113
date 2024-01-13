@@ -1,0 +1,18 @@
+<view class="page">
+	<image class="img" src="../../../static/icon1.svg"></image>
+
+  <form>
+    <view class="input-box">
+      <image class="icon" src="../../../static/icon2.svg"></image>
+      <input class="input" type="text" placeholder="用户昵称"></input>
+    </view>
+    
+    <view class="input-box">
+      <image class="icon" src="../../../static/icon3.svg"></image>
+      <input class="input" type="password" placeholder="手机号"></input>
+    </view>
+    
+    <button class="button" bindtap="gotoHome">登录</button>
+  </form>
+
+</view>

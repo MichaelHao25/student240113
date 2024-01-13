@@ -1,0 +1,43 @@
+// 云函数入口文件
+const cloud = require('wx-server-sdk')
+cloud.init({
+  env: cloud.DYNAMIC_CURRENT_ENV,
+  // traceUser:true,
+})
+const db = cloud.database();
+const _ = db.command
+// 云函数入口函数
+exports.main = async (event, context) => {
+  const {
+    openid,
+    appid
+  } = cloud.getWXContext();
+  const {
+    mobile,
+    username
+  } = event;
+  // event = 
+  // {
+  //    mobile: "13312121212"
+  //    username: "王八"
+  // }
+  if (mobile == false || username == false || openid == false || appid == false) {
+    return {
+      success: '用户信息不完整,请检查信息;'
+    }
+  }
+  const user = db.collection('user').where({
+    mobile: _.eq(mobile),
+    username: _.eq(username),
+    openid: _.eq(openid),
+    appid: _.eq(appid),
+  });
+
+  // const todos = db.collection('list')
+  return {
+    event,
+    openid: wxContext.OPENID,
+    appid: wxContext.APPID,
+    unionid: wxContext.UNIONID,
+  }
+}
