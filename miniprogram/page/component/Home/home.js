@@ -1,3 +1,6 @@
+const {
+  envList
+} = require('../../../envList.js');
 // page/component/Home/home.js
 Page({
 
@@ -62,5 +65,34 @@ Page({
    */
   onShareAppMessage() {
 
-  }
+  },
+  onSubmit: function () {
+    // wx.navigateTo({
+    //   url: '/page/component/Home/home'
+    // })
+    wx.cloud.callFunction({
+      name: "submit",
+      config: {
+        env: envList[0].envId,
+      },
+      data: {
+        name: 'name',
+        gender: 'gender',
+        studentId: 'studentId',
+        class: 'class',
+        phone: 'phone',
+        college: 'college',
+        major: 'major',
+        email: 'email',
+        address: 'address',
+      },
+      complete: (res) => {
+        /**
+         * 调用成功的话 success:true
+         * 调用失败的话 success:false
+         */
+        console.log("callFunction test result: ", res);
+      },
+    });
+  },
 })
