@@ -8,8 +8,8 @@
     <view class="form-item">
       <view class="label">性别</view>
       <radio-group  name="gender">
-        <label><radio value="male" checked="{{gender==='male'}}"/>男</label>
-        <label class="lb"><radio value="female"  checked="{{gender==='female'}}"/>女</label>
+        <label><radio class="redio" value="male" checked="{{gender==='male'}}"/>男</label>
+        <label class="lb"><radio class="redio" value="female"  checked="{{gender==='female'}}"/>女</label>
       </radio-group>
     </view>
     <view class="form-item">
