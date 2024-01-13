@@ -8,91 +8,101 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    name: '',
+    gender: 'male',
+    studentId: '',
+    class: '',
+    phone: '',
+    college: '',
+    major: '',
+    email: '',
+    address: '',
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
 
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
-  },
-  onSubmit: function () {
+  onSubmit: async function (data) {
+    const {
+      name,
+      gender,
+      studentId,
+      class: className,
+      phone,
+      college,
+      major,
+      email,
+      address,
+    } = data?.detail?.value;
+    if (
+      address == false ||
+      className == false ||
+      college == false ||
+      email == false ||
+      gender == false ||
+      major == false ||
+      name == false ||
+      phone == false ||
+      studentId == false
+    ) {
+      return wx.showToast({
+        title: '请完整填写内容！',
+        icon: 'none',
+        duration: 2000
+      })
+    }
+    wx.showLoading({
+      title: 'loading...',
+    })
     // wx.navigateTo({
     //   url: '/page/component/Home/home'
     // })
-    wx.cloud.callFunction({
+    const {result} = await wx.cloud.callFunction({
       name: "submit",
       config: {
         env: envList[0].envId,
       },
       data: {
-        name: 'name',
-        gender: 'gender',
-        studentId: 'studentId',
-        class: 'class',
-        phone: 'phone',
-        college: 'college',
-        major: 'major',
-        email: 'email',
-        address: 'address',
-      },
-      complete: (res) => {
-        /**
-         * 调用成功的话 success:true
-         * 调用失败的话 success:false
-         */
-        console.log("callFunction test result: ", res);
-      },
+        address,
+        class: className,
+        college,
+        email,
+        gender,
+        major,
+        name,
+        phone,
+        studentId,
+      }
     });
+    /**
+     * 调用成功的话 success:true
+     * 调用失败的话 success:false
+     */
+    wx.hideLoading()
+    if (result?.success) {
+      
+      wx.showModal({
+        title: '成功',
+        content:'数据已经提交完毕！',
+        showCancel:false,
+        complete:()=>{
+          this.setData({
+            name: '',
+            gender: 'male',
+            studentId: '',
+            class: '',
+            phone: '',
+            college: '',
+            major: '',
+            email: '',
+            address: '',
+          })
+        }
+      })
+    } else {
+      wx.showToast({
+        title: result.msg,
+        icon: 'error',
+        duration: 10000
+      })
+    }
   },
 })

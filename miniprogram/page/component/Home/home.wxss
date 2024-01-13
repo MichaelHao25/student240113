@@ -6,6 +6,11 @@
   height: 100vh;
   background-color: #52ba99;
 }
+.form{
+  padding:0 0 20px 0 ;
+  display: flex;
+  justify-content: center;
+}
 
 .form-item {
   display: flex;
