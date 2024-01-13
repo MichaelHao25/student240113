@@ -9,35 +9,86 @@ const _ = db.command
 // 云函数入口函数
 exports.main = async (event, context) => {
   const {
-    openid,
-    appid
+    OPENID: openid,
+    APPID: appid
   } = cloud.getWXContext();
   const {
     mobile,
     username
   } = event;
-  // event = 
-  // {
-  //    mobile: "13312121212"
-  //    username: "王八"
-  // }
   if (mobile == false || username == false || openid == false || appid == false) {
     return {
-      success: '用户信息不完整,请检查信息;'
+      success: false,
+      msg: '用户信息不完整,请检查信息;'
     }
   }
-  const user = db.collection('user').where({
-    mobile: _.eq(mobile),
-    username: _.eq(username),
+  const user = await db.collection('user').where({
     openid: _.eq(openid),
     appid: _.eq(appid),
-  });
+  }).get();
+  /**
+   * 用户存在
+   */
+  if (user.data.length !== 0) {
+    /**
+     * 并且是一个人
+     */
+    if (user.data.length === 1) {
+      const [item] = user.data;
+      if (item.username === username && item.mobile === mobile) {
+        await db.collection('user').where({
+          openid: _.eq(openid),
+          appid: _.eq(appid),
+        }).update({
+          data: {
+            login: true,
+          }
+        });
+        return {
+          success: true,
+          msg: '登陆成功!'
+        }
+      }
+    } else {
+      /**
+       * 如果不是一条数据的话
+       */
+      return {
+        success: false,
+        msg: '服务器错误，请联系管理员！'
+      }
+    }
+  } else {
+    /**
+     * 不存在的话就创建用户
+     */
+    const res = await db.collection('user').add({
+      data: {
+        openid,
+        appid,
+        mobile,
+        username,
+        login: true
+      }
+    })
+    /**
+     * 创建失败
+     */
+    if (!res._id) {
+      return {
+        success: false,
+        msg: '登陆失败,请重试!'
+      }
+    } else {
+      return {
+        success: true,
+        msg: '登陆成功!'
+      }
+    }
+  }
 
-  // const todos = db.collection('list')
   return {
-    event,
-    openid: wxContext.OPENID,
-    appid: wxContext.APPID,
-    unionid: wxContext.UNIONID,
+    success: false,
+    msg: '未知错误'
   }
 }
